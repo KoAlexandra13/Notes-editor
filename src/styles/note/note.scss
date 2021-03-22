@@ -1,0 +1,29 @@
+.note-container{
+    border: solid 1px rgb(150, 150, 150);
+    margin: 2rem;
+    border-radius: 15px;
+    -webkit-box-shadow: 3px 3px 3px -3px #4A4A4A; 
+    box-shadow: 3px 3px 3px -3px #4A4A4A;
+
+    .note-edit-text-container{
+        margin: 1rem;
+
+        textarea{
+            resize: none;
+            border: solid 2px #6fb4fb;
+            border-radius: 5px;
+            width: 99%;
+
+            &:focus{
+                outline: none;
+            }
+        }
+    }
+
+    .options-container{
+        margin-right: 1rem;
+        margin-bottom: 0.25rem;
+        display: flex;
+        justify-content: flex-end;
+    }
+}
