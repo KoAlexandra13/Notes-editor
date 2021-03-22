@@ -8,7 +8,7 @@
     flex-wrap: wrap;
 
     h2{
-        color: rgb(253, 245, 232);
+        color: white;
         font-size: xx-large;
         margin: 0.75rem;
         padding-left: 1rem;
@@ -30,11 +30,12 @@
 
             &:hover{
                 background-color: rgba(212, 210, 207, 0.233);
+                cursor: pointer;
             }
 
             p{
                 font-size: large;
-                color: rgb(253, 245, 232);
+                color: white;
                 font-weight: bolder;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 
                 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;

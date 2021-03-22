@@ -1,10 +1,13 @@
-import React from 'react'
+import React, {useState} from 'react'
 
-function EditNoteTextArea() {
+function EditNoteTextArea(props) {
+    const [text, setText] = useState(props.noteText);
     return( 
         <div className='note-edit-text-container'>
-            <textarea name="" id="" rows="10">
-            </textarea>
+            <textarea 
+                name='note-textarea' 
+                value={text}
+                onChange={(e) => (setText(e.target.value))}/>
         </div>
     )
 }

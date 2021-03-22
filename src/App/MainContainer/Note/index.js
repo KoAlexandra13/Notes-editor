@@ -3,6 +3,9 @@ import EditRoundedIcon from '@material-ui/icons/EditRounded';
 import DeleteForeverRoundedIcon from '@material-ui/icons/DeleteForeverRounded';
 import IconButton from '@material-ui/core/IconButton';
 import EditNoteTextArea from './EditNoteTextArea';
+import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
+import Tag from './Tag';
+import DialogWindow from '../DialogWindow';
 
 function useOutsideAlerter(ref, callback) {
     useEffect(() => {
@@ -15,38 +18,53 @@ function useOutsideAlerter(ref, callback) {
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
-    }, [ref]);
+    }, [ref, callback]);
 }
 
-function Note() {
-    const [open, setOpen] = useState(false);
+function Note(props) {
+    const [openEdit, setOpenEdit] = useState(false);
+    const [openDialogWindow, setOpenDialogWindow] = useState(false);
     const wrapperRef = useRef(null);
-    useOutsideAlerter(wrapperRef, setOpen);
+    const {noteText, noteTags} = props;
+    
+    useOutsideAlerter(wrapperRef, setOpenEdit);
+
+    function handleClickDeleteNode(initState){
+        setOpenDialogWindow(!initState);
+    }
 
     return (
         <div 
             className='note-container'
             ref={wrapperRef}
         >
-            {open ? <EditNoteTextArea/> : 
-                <div>
-                    <p> 
-
+            {openEdit ? <EditNoteTextArea noteText={noteText}/> : 
+                <div className='note-text-container'>
+                    <p className='note-text'> 
+                        {noteText}
                     </p>
                 </div>
             }
             
             <div className='tags-container'>
-
+                {noteTags.map((tag, index) => {
+                    return (
+                    <Tag 
+                        tag={tag}
+                        isOpenEditPane={openEdit} 
+                        key={tag + index}/>)
+                })
+                }
             </div>
             <div className='options-container'>
-                <IconButton onClick = {() => {setOpen(true)}}>
-                    <EditRoundedIcon />
-                </IconButton>
-                <IconButton>
-                    <DeleteForeverRoundedIcon/>
-                </IconButton>
+                    <IconButton onClick = {() => setOpenEdit(!openEdit)}>
+                        {openEdit ? <DoneRoundedIcon/> : <EditRoundedIcon />}
+                    </IconButton>
+                    <IconButton onClick = {() => setOpenDialogWindow(true)}>
+                        <DeleteForeverRoundedIcon/>
+                    </IconButton>
             </div>
+            <DialogWindow openDialogWindow={openDialogWindow} handleClickDeleteNode={handleClickDeleteNode}/>
         </div>
     )
 }
