@@ -52,6 +52,11 @@
 
     .note-text-container{
         margin: 1rem;
+
+        .note-text{
+            width: 100%;
+            word-wrap: break-word;
+        }
     }
 
     .options-container{

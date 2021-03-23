@@ -6,7 +6,7 @@ function Tag(props) {
     return (
         <div 
             className='tag'>
-            <p>{'#' + tag}</p>
+            <p>{tag}</p>
             {isOpenEditPane && 
                 <button className='delete-tag'>
                     <CloseRoundedIcon style={{fontSize: 'medium', color: 'red'}}/>

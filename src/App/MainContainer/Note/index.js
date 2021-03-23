@@ -29,10 +29,10 @@ function Note(props) {
     
     useOutsideAlerter(wrapperRef, setOpenEdit);
 
-    function handleClickDeleteNode(initState){
+    function handleCloseDeleteNote(initState){
         setOpenDialogWindow(!initState);
     }
-
+    
     return (
         <div 
             className='note-container'
@@ -64,7 +64,10 @@ function Note(props) {
                         <DeleteForeverRoundedIcon/>
                     </IconButton>
             </div>
-            <DialogWindow openDialogWindow={openDialogWindow} handleClickDeleteNode={handleClickDeleteNode}/>
+            <DialogWindow 
+                openDialogWindow={openDialogWindow} 
+                handleCloseDeleteNote={handleCloseDeleteNote}
+            />
         </div>
     )
 }

@@ -1,4 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import Tag from '../Note/Tag';
+import $ from 'jquery'; 
 
 function useOutsideAlerter(ref, callback) {
     useEffect(() => {
@@ -14,10 +16,40 @@ function useOutsideAlerter(ref, callback) {
     }, [ref, callback]);
 }
 
-function CreateNewNode(props) {
-    const {closeCreateNotePane} = props;
+function CreateNewNote(props) {
+    const [tags, setTags] = useState([]);
+    const {closeCreateNotePane, addNewNoteData} = props;
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, closeCreateNotePane);
+
+    function changeNoteText(e){
+        const enteredText = e.target.value;
+        const wordArray = enteredText.split(' ').slice(0, -1);
+
+        const tagsArray = wordArray.filter(word => word[0] === '#');
+        setTags(tagsArray);
+        e.preventDefault();
+        return;
+    }
+
+    function createNewNote() {
+        const noteText = $('textarea[name="create-note-textarea"]').val();
+        const wordsArray = noteText.split(' ');
+        const lastWord = wordsArray[wordsArray.length - 1];
+        let newTagsArr = [...tags]; 
+
+        if(lastWord !== '' && lastWord[0] === '#'){
+            newTagsArr.push(lastWord);
+        }
+
+        const noteData = {
+            "text": noteText,
+            "tags": newTagsArr 
+        }
+
+        closeCreateNotePane(false)
+        addNewNoteData(noteData);
+    }
 
     return (
         <div 
@@ -25,11 +57,21 @@ function CreateNewNode(props) {
             ref={wrapperRef}
         >
             <div className='note-create-text-container'>
-                <textarea rows='5' name='create-note-textarea'/>
+                <textarea 
+                    rows='5' 
+                    name='create-note-textarea'
+                    onChange={(e) => changeNoteText(e)}/>
             </div>
 
             <div className='tags-container'>
-                
+                {tags && tags.map((tag, index) => {
+                    return (
+                        <Tag 
+                            tag={tag}
+                            isOpenEditPane={true} 
+                            key={tag + index}/>)
+                        })
+                }
             </div>
 
             <div className='options-container'>
@@ -38,7 +80,9 @@ function CreateNewNode(props) {
                     className='close-create-note-pane'>
                     <p>Close</p>
                 </button>
-                <button className='create-note'>
+                <button
+                    onClick={() => createNewNote()} 
+                    className='create-note'>
                     <p>Create note</p>
                 </button>
             </div>
@@ -46,4 +90,4 @@ function CreateNewNode(props) {
     )
 }
 
-export default CreateNewNode;
+export default CreateNewNote;
