@@ -1,16 +1,20 @@
 import React, {useState} from 'react'
 
-function EditNoteTextArea(props) {
+export default function EditNoteTextArea(props) {
     const [text, setText] = useState(props.noteText);
+    const {changeNoteText} = props;
     return( 
         <div className='note-edit-text-container'>
             <textarea 
                 rows='5'
-                name='note-textarea' 
+                name='edit-note-textarea' 
                 value={text}
-                onChange={(e) => (setText(e.target.value))}/>
+                onChange={(e) => {
+                        setText(e.target.value);
+                        changeNoteText(e);
+                    }
+                }
+                />
         </div>
     )
 }
-
-export default EditNoteTextArea;

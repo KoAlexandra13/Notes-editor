@@ -1,7 +1,7 @@
 import React from 'react';
 import CloseRoundedIcon from '@material-ui/icons/CloseRounded';
 
-function Tag(props) {
+export default function Tag(props) {
     const {tag, isOpenEditPane} = props;
     return (
         <div 
@@ -15,5 +15,3 @@ function Tag(props) {
         </div>
     )
 }
-
-export default Tag;

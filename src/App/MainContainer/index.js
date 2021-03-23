@@ -7,19 +7,19 @@ import CreateNewNote from './CreateNewNote';
 
 export const deleteNoteContext = React.createContext(null);
 
-function MainContainer() {
+export default function MainContainer() {
     const [openCreatePane, setOpenCreatePane] = useState(false);
     const [notes, setNotes] = useState(data);
 
-    function addNewNoteToFile(newData) {
-        const newNotes = [...notes];
-        newNotes.unshift(newData);
-        setNotes(newNotes);
-    }
-
-    function deleteNote(index) {
-        const newNotes = [...notes];
-        newNotes.splice(index, 1);
+    function changeNotesList(action, newData, index=-1){
+        const newNotes = Array.from(data);
+        if (action === 'delete'){
+            newNotes.splice(index, 1);
+        } else if (action === 'create'){
+            newNotes.unshift(newData);
+        } else if (action === 'edit'){
+            newNotes[index] = newData;
+        }
         setNotes(newNotes);
     }
 
@@ -30,16 +30,17 @@ function MainContainer() {
             {openCreatePane && 
                 <CreateNewNote 
                     closeCreateNotePane={setOpenCreatePane} 
-                    addNewNoteData={addNewNoteToFile}
+                    saveNewNote={changeNotesList}
                 />
             }
             {notes.map((note, index) => {
                 return (
-                    <deleteNoteContext.Provider key={'provider' + index} value={() => deleteNote(index)}>
-                        <Note 
-                            noteText={note.text}
-                            noteTags={note.tags}
+                    <deleteNoteContext.Provider key={'provider' + index} value={() => changeNotesList('delete', {}, index)}>
+                        <Note
+                            index={index} 
+                            note={note}
                             key={'note' + index}
+                            saveEditNote={changeNotesList}
                         />
                     </deleteNoteContext.Provider>
                 )
@@ -47,5 +48,3 @@ function MainContainer() {
         </>
     )
 }
-
-export default MainContainer;

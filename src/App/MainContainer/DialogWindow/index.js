@@ -7,7 +7,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Button from '@material-ui/core/Button';
 import {deleteNoteContext} from '../../MainContainer';
 
-function DialogWindow(props){
+export default function DialogWindow(props){
     const deleteNote = useContext(deleteNoteContext);
     const {openDialogWindow, handleCloseDeleteNote} = props;
     return (
@@ -41,5 +41,3 @@ function DialogWindow(props){
         </Dialog>
     );
 }
-
-export default DialogWindow;

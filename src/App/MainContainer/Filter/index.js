@@ -1,11 +1,9 @@
 import React from 'react';
 
-function Filter() {
+export default function Filter() {
     return (
         <div>
             
         </div>
     )
 }
-
-export default Filter;

@@ -1,7 +1,7 @@
 import React from 'react'
 import AddRoundedIcon from '@material-ui/icons/AddRounded';
 
-function Header(props) {
+export default function Header(props) {
     const {openCreateNotePane} = props;
     return (
         <div className='main-header-container'>
@@ -25,5 +25,3 @@ function Header(props) {
         </div>
     )
 }
-
-export default Header;

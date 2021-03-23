@@ -16,13 +16,13 @@ function useOutsideAlerter(ref, callback) {
     }, [ref, callback]);
 }
 
-function CreateNewNote(props) {
+export default function CreateNewNote(props) {
     const [tags, setTags] = useState([]);
-    const {closeCreateNotePane, addNewNoteData} = props;
+    const {closeCreateNotePane, saveNewNote} = props;
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, closeCreateNotePane);
 
-    function changeNoteText(e){
+    function changeNewNoteText(e){
         const enteredText = e.target.value;
         const wordArray = enteredText.split(' ').slice(0, -1);
 
@@ -48,7 +48,7 @@ function CreateNewNote(props) {
         }
 
         closeCreateNotePane(false)
-        addNewNoteData(noteData);
+        saveNewNote('create', noteData);
     }
 
     return (
@@ -60,7 +60,7 @@ function CreateNewNote(props) {
                 <textarea 
                     rows='5' 
                     name='create-note-textarea'
-                    onChange={(e) => changeNoteText(e)}/>
+                    onChange={(e) => changeNewNoteText(e)}/>
             </div>
 
             <div className='tags-container'>
@@ -89,5 +89,3 @@ function CreateNewNote(props) {
         </div>
     )
 }
-
-export default CreateNewNote;
