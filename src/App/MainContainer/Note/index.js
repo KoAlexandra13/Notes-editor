@@ -36,30 +36,52 @@ export default function Note(props) {
     }
 
     function editNote() {
-        const noteText = $('textarea[name="edit-note-textarea"]').val();
-        const wordsArray = noteText.split(' ');
+        const wordsArray = $('div[id="edit-note-textarea"]').text().replace(/[\s]+/g, " ").trim().split(" ");
         const lastWord = wordsArray[wordsArray.length - 1];
         let newTagsArr = [...tags]; 
 
-        if(lastWord !== '' && lastWord[0] === '#'){
+        console.log(lastWord);
+
+        if(lastWord[0] === '#' && lastWord !== tags[tags.length - 1]){
             newTagsArr.push(lastWord);
         }
 
         const noteData = {
-            "text": noteText,
+            "text": wordsArray.join(' '),
             "tags": newTagsArr 
         }
+
 
         setOpenEdit(!openEdit);
         saveEditNote('edit', noteData, index);    
     }
 
     function changeNoteText(e){
-        const enteredText = e.target.value;
-        const wordArray = enteredText.split(' ').slice(0, -1);
+        if (e.keyCode === 32){
+            const wordArray = $(`#${e.target.id}`).text().replace(/[\s]+/g, " ").trim().split(" ");
+            const tagsArray = wordArray.filter(word => word[0] === '#');
 
-        const tagsArray = wordArray.filter(word => word[0] === '#');
-        setTags(tagsArray);
+            setTags(tagsArray);
+
+            let newHTML = "";
+            wordArray.forEach(val => {
+            if (val[0] === '#'){
+                newHTML += "<span class='statement'>" + val + "&nbsp;</span>";
+            }
+            else
+                newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
+            });
+
+            $(`#${e.target.id}`).html(newHTML);
+
+            var child = $(`#${e.target.id}`).children();
+            var range = document.createRange();
+            var sel = window.getSelection();
+            range.setStart(child[child.length-1], 1);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }    
     }
     
     return (
@@ -67,7 +89,14 @@ export default function Note(props) {
             {openEdit ? <EditNoteTextArea changeNoteText={changeNoteText} noteText={note.text}/> : 
                 <div className='note-text-container'>
                     <p className='note-text'> 
-                        {note.text}
+                        {note.text.split(' ').map((text, index) => {
+                            const color = text[0] === '#' ? '#005eff' : 'black'
+                            return (
+                                <span key={text[0] + index} style={{ color: color, display: 'inline'}}>
+                                    {text} &nbsp;
+                                </span>
+                            )
+                        })}
                     </p>
                 </div>
             }

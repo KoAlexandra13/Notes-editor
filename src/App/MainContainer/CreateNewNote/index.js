@@ -22,33 +22,50 @@ export default function CreateNewNote(props) {
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, closeCreateNotePane);
 
-    function changeNewNoteText(e){
-        const enteredText = e.target.value;
-        const wordArray = enteredText.split(' ').slice(0, -1);
-
-        const tagsArray = wordArray.filter(word => word[0] === '#');
-        setTags(tagsArray);
-        e.preventDefault();
-        return;
-    }
-
     function createNewNote() {
-        const noteText = $('textarea[name="create-note-textarea"]').val();
-        const wordsArray = noteText.split(' ');
+        const wordsArray = $('div[id="create-note-textarea"]').text().replace(/[\s]+/g, " ").trim().split(" ");
         const lastWord = wordsArray[wordsArray.length - 1];
         let newTagsArr = [...tags]; 
 
-        if(lastWord !== '' && lastWord[0] === '#'){
+        if(lastWord[0] === '#' && lastWord !== tags[tags.length - 1]){
             newTagsArr.push(lastWord);
         }
 
         const noteData = {
-            "text": noteText,
+            "text": wordsArray.join(' '),
             "tags": newTagsArr 
         }
 
         closeCreateNotePane(false)
         saveNewNote('create', noteData);
+    }
+
+    function changeNoteText(e){
+        if (e.keyCode === 32){
+            const wordArray = $(`#${e.target.id}`).text().replace(/[\s]+/g, " ").trim().split(" ");
+            const tagsArray = wordArray.filter(word => word[0] === '#');
+
+            setTags(tagsArray);
+
+            let newHTML = "";
+            wordArray.forEach(val => {
+            if (val[0] === '#'){
+                newHTML += "<span class='statement'>" + val + "&nbsp;</span>";
+            }
+            else
+                newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
+            });
+
+            $(`#${e.target.id}`).html(newHTML);
+
+            var child = $(`#${e.target.id}`).children();
+            var range = document.createRange();
+            var sel = window.getSelection();
+            range.setStart(child[child.length-1], 1);
+            range.collapse(true);
+            sel.removeAllRanges();
+            sel.addRange(range);
+        }    
     }
 
     return (
@@ -57,10 +74,11 @@ export default function CreateNewNote(props) {
             ref={wrapperRef}
         >
             <div className='note-create-text-container'>
-                <textarea 
-                    rows='5' 
-                    name='create-note-textarea'
-                    onChange={(e) => changeNewNoteText(e)}/>
+            <div 
+                id='create-note-textarea' 
+                contentEditable={true}
+                suppressContentEditableWarning={true} 
+                onKeyUp={(e) => changeNoteText(e)}/>
             </div>
 
             <div className='tags-container'>

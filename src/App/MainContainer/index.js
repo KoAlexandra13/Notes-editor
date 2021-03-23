@@ -12,7 +12,7 @@ export default function MainContainer() {
     const [notes, setNotes] = useState(data);
 
     function changeNotesList(action, newData, index=-1){
-        const newNotes = Array.from(data);
+        const newNotes = Array.from(notes);
         if (action === 'delete'){
             newNotes.splice(index, 1);
         } else if (action === 'create'){
