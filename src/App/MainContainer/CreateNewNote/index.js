@@ -49,12 +49,13 @@ export default function CreateNewNote(props) {
 
             let newHTML = "";
             wordArray.forEach(val => {
-            if (val[0] === '#'){
-                newHTML += "<span class='statement'>" + val + "&nbsp;</span>";
-            }
-            else
-                newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
-            });
+                if (val[0] === '#'){
+                    newHTML += "<span class='statement'>" + val + "&nbsp;</span>";
+                }
+                else
+                    newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
+                }
+            );
 
             $(`#${e.target.id}`).html(newHTML);
 

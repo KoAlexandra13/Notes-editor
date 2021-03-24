@@ -40,8 +40,6 @@ export default function Note(props) {
         const lastWord = wordsArray[wordsArray.length - 1];
         let newTagsArr = [...tags]; 
 
-        console.log(lastWord);
-
         if(lastWord[0] === '#' && lastWord !== tags[tags.length - 1]){
             newTagsArr.push(lastWord);
         }

@@ -23,10 +23,22 @@ export default function MainContainer() {
         setNotes(newNotes);
     }
 
+    function filterByTags(selectedOptions) {
+        if(selectedOptions){
+            const selectedTags = selectedOptions.map(option => option.value)
+            const filteringNotes = notes.filter(note => note.tags.some(tag => selectedTags.includes(tag)))
+
+            setNotes(filteringNotes);
+            return;
+        } 
+
+        setNotes(data);
+    }
+
     return(
         <>
             <Header openCreateNotePane={setOpenCreatePane}/>
-            <Filter />
+            <Filter notes={notes} filterByTags={filterByTags}/>
             {openCreatePane && 
                 <CreateNewNote 
                     closeCreateNotePane={setOpenCreatePane} 
