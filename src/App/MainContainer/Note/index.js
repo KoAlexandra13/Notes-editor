@@ -23,7 +23,7 @@ function useOutsideAlerter(ref, callback) {
 }
 
 export default function Note(props) {
-    const {note, index, saveEditNote} = props;
+    const {note, saveEditNote} = props;
     const [openEdit, setOpenEdit] = useState(false);
     const [openDialogWindow, setOpenDialogWindow] = useState(false);
     const [tags, setTags] = useState(note.tags);
@@ -49,9 +49,8 @@ export default function Note(props) {
             "tags": newTagsArr 
         }
 
-
         setOpenEdit(!openEdit);
-        saveEditNote('edit', noteData, index);    
+        saveEditNote('edit', noteData, note.id);    
     }
 
     function changeNoteText(e){

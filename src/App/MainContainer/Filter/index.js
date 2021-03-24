@@ -7,7 +7,8 @@ function tagsParser(data){
 
     const options = allTags.map(tag => {
         const option = {
-            label: tag, value: tag,
+            label: tag, 
+            value: tag,
         }
         return option; 
     })
@@ -18,6 +19,7 @@ function tagsParser(data){
 export default function Filter(props) {
     const {notes, filterByTags} = props;
     const options = tagsParser(notes);
+
     return (
         <div className='filter-container'>
           <Creatable

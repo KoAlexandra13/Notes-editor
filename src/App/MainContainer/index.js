@@ -1,26 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './Header';
 import Note from './Note';
-import { data } from './data.json';
 import Filter from './Filter';
 import CreateNewNote from './CreateNewNote';
+import {getDataRequest, deleteNoteRequest, 
+    addNewNoteRequest, editNoteRequest} from '../../api';
 
 export const deleteNoteContext = React.createContext(null);
 
 export default function MainContainer() {
     const [openCreatePane, setOpenCreatePane] = useState(false);
-    const [notes, setNotes] = useState(data);
+    const [notes, setNotes] = useState([]);
+    const [newNotesState, setNewNotesState] = useState(notes);
 
-    function changeNotesList(action, newData, index=-1){
+    useEffect(() => {
+        async function getNotes(){
+            const data = await getDataRequest()
+            setNotes(data.reverse())
+        }
+        getNotes()
+    }, [newNotesState]);
+
+    function changeNotesList(action, newData, id){
         const newNotes = Array.from(notes);
         if (action === 'delete'){
-            newNotes.splice(index, 1);
+            deleteNoteRequest(id);
         } else if (action === 'create'){
-            newNotes.unshift(newData);
+            addNewNoteRequest(newData);
         } else if (action === 'edit'){
-            newNotes[index] = newData;
+            editNoteRequest(id, newData);
         }
-        setNotes(newNotes);
+        setNewNotesState(newNotes);
     }
 
     function filterByTags(selectedOptions) {
@@ -30,28 +40,31 @@ export default function MainContainer() {
 
             setNotes(filteringNotes);
             return;
-        } 
-
-        setNotes(data);
+        }
+        
+        setNewNotesState(notes);
     }
 
     return(
         <>
             <Header openCreateNotePane={setOpenCreatePane}/>
             <Filter notes={notes} filterByTags={filterByTags}/>
+            
             {openCreatePane && 
                 <CreateNewNote 
                     closeCreateNotePane={setOpenCreatePane} 
                     saveNewNote={changeNotesList}
                 />
             }
-            {notes.map((note, index) => {
+            {notes.map(note => {
                 return (
-                    <deleteNoteContext.Provider key={'provider' + index} value={() => changeNotesList('delete', {}, index)}>
+                    <deleteNoteContext.Provider 
+                        key={'provider' + note.id} 
+                        value={() => changeNotesList('delete', {}, note.id)}>
+
                         <Note
-                            index={index} 
                             note={note}
-                            key={'note' + index}
+                            key={'note' + note.id}
                             saveEditNote={changeNotesList}
                         />
                     </deleteNoteContext.Provider>
