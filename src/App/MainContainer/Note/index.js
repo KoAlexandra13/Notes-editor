@@ -7,6 +7,7 @@ import DoneRoundedIcon from '@material-ui/icons/DoneRounded';
 import Tag from './Tag';
 import DialogWindow from '../DialogWindow';
 import $ from 'jquery'; 
+import _ from 'lodash'
 
 function useOutsideAlerter(ref, callback) {
     useEffect(() => {
@@ -22,12 +23,36 @@ function useOutsideAlerter(ref, callback) {
     }, [ref, callback]);
 }
 
+function tagsHighlighting(array) {
+    let html = "";
+    array.forEach(val => {
+        if (val[0] === '#'){
+            html += "<span class='statement'>" + val + "&nbsp;</span>";
+        }
+        else
+            html += "<span class='other'>" + val + "&nbsp;</span>"; 
+        }
+    );
+    return html;
+}
+
+function setCursorPostionToEndOfText(nodeName){
+    let child = $(nodeName).children();
+    let range = document.createRange();
+    let sel = window.getSelection();
+    range.setStart(child[child.length-1], 1);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
 export default function Note(props) {
     const {note, saveEditNote} = props;
     const [openEdit, setOpenEdit] = useState(false);
     const [openDialogWindow, setOpenDialogWindow] = useState(false);
     const [tags, setTags] = useState(note.tags);
     const wrapperRef = useRef(null);
+    const [text, setText] = useState(note.text);
     
     useOutsideAlerter(wrapperRef, setOpenEdit);
 
@@ -60,30 +85,24 @@ export default function Note(props) {
 
             setTags(tagsArray);
 
-            let newHTML = "";
-            wordArray.forEach(val => {
-            if (val[0] === '#'){
-                newHTML += "<span class='statement'>" + val + "&nbsp;</span>";
-            }
-            else
-                newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
-            });
+            let newHTML = tagsHighlighting(wordArray);
 
             $(`#${e.target.id}`).html(newHTML);
 
-            var child = $(`#${e.target.id}`).children();
-            var range = document.createRange();
-            var sel = window.getSelection();
-            range.setStart(child[child.length-1], 1);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
+            setCursorPostionToEndOfText(`#${e.target.id}`);
         }    
+    }
+
+    function deleteTag(tag){
+        let newTagsList = _.remove(tags, (el) => el !== tag);
+        setTags(newTagsList);
+        const position = text.search(tag);
+        setText(text.slice(0, position) + text.slice(position + 1));
     }
     
     return (
         <div className='note-container' ref={wrapperRef}>
-            {openEdit ? <EditNoteTextArea changeNoteText={changeNoteText} noteText={note.text}/> : 
+            {openEdit ? <EditNoteTextArea changeNoteText={changeNoteText} noteText={text}/> : 
                 <div className='note-text-container'>
                     <p className='note-text'> 
                         {note.text.split(' ').map((text, index) => {
@@ -101,7 +120,8 @@ export default function Note(props) {
             <div className='tags-container'>
                 {(openEdit ? tags : note.tags).map((tag, index) => {
                     return (
-                    <Tag 
+                    <Tag
+                        deleteTag={deleteTag}
                         tag={tag}
                         isOpenEditPane={openEdit} 
                         key={tag + index}/>)

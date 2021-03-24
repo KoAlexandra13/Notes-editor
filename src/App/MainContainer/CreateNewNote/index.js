@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Tag from '../Note/Tag';
 import $ from 'jquery'; 
+import _ from 'lodash';
 
 function useOutsideAlerter(ref, callback) {
     useEffect(() => {
@@ -14,6 +15,29 @@ function useOutsideAlerter(ref, callback) {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, [ref, callback]);
+}
+
+function tagsHighlighting(array) {
+    let html = "";
+    array.forEach(val => {
+        if (val[0] === '#'){
+            html += "<span class='statement'>" + val + "&nbsp;</span>";
+        }
+        else
+            html += "<span class='other'>" + val + "&nbsp;</span>"; 
+        }
+    );
+    return html;
+}
+
+function setCursorPostionToEndOfText(nodeName){
+    let child = $(nodeName).children();
+    let range = document.createRange();
+    let sel = window.getSelection();
+    range.setStart(child[child.length-1], 1);
+    range.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(range);
 }
 
 export default function CreateNewNote(props) {
@@ -47,26 +71,29 @@ export default function CreateNewNote(props) {
 
             setTags(tagsArray);
 
-            let newHTML = "";
-            wordArray.forEach(val => {
-                if (val[0] === '#'){
-                    newHTML += "<span class='statement'>" + val + "&nbsp;</span>";
-                }
-                else
-                    newHTML += "<span class='other'>" + val + "&nbsp;</span>"; 
-                }
-            );
+            let newHTML = tagsHighlighting(wordArray);
 
             $(`#${e.target.id}`).html(newHTML);
 
-            var child = $(`#${e.target.id}`).children();
-            var range = document.createRange();
-            var sel = window.getSelection();
-            range.setStart(child[child.length-1], 1);
-            range.collapse(true);
-            sel.removeAllRanges();
-            sel.addRange(range);
+            setCursorPostionToEndOfText(`#${e.target.id}`);
+            
         }    
+    }
+
+    function deleteTag(tag){
+        let newTagsList = _.remove(tags, (el) => el !== tag);
+        const node = 'div[id="create-note-textarea"]';
+        setTags(newTagsList);
+        const text = $(node).text().replace(/[\s]+/g, " ").trim();
+        const position = text.search(tag);
+        const wordArray = (text.slice(0, position) + text.slice(position + 1)).split(' ');
+
+        let newHTML = tagsHighlighting(wordArray);
+
+        $(node).html(newHTML);
+
+        setCursorPostionToEndOfText(node);
+
     }
 
     return (
@@ -79,13 +106,15 @@ export default function CreateNewNote(props) {
                 id='create-note-textarea' 
                 contentEditable={true}
                 suppressContentEditableWarning={true} 
-                onKeyUp={(e) => changeNoteText(e)}/>
+                onKeyUp={(e) => changeNoteText(e)}
+            />
             </div>
 
             <div className='tags-container'>
                 {tags && tags.map((tag, index) => {
                     return (
-                        <Tag 
+                        <Tag
+                            deleteTag={deleteTag} 
                             tag={tag}
                             isOpenEditPane={true} 
                             key={tag + index}/>)

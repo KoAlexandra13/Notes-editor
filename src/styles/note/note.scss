@@ -56,6 +56,14 @@
                 border: none;
                 outline: none;
                 padding-top: 4px;
+
+                &:hover{
+                    cursor: pointer;
+                }
+            }
+
+            &:hover{
+                cursor: pointer;
             }
         }
     }
